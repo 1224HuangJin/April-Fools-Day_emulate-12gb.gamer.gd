@@ -3,99 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Portal</title>
+    <title>Global Content Portal</title>
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #000;
             overflow: hidden;
             color: #333;
         }
 
-        /* 视频背景 */
+        /* 视频背景层 */
         #video-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; opacity: 0; transition: opacity 1.5s ease;
         }
         #bg-video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 全屏遮罩 */
+        /* 全屏模糊遮罩 */
         #main-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+            background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+            backdrop-filter: blur(12px);
             display: flex; justify-content: center; align-items: center;
-            z-index: 100; transition: opacity 0.5s ease;
+            z-index: 100; transition: opacity 0.6s ease;
         }
 
-        /* 卡片容器 */
+        /* 现代卡片容器 */
         .card {
-            background: white; border-radius: 16px; padding: 40px;
-            width: 90%; max-width: 500px; position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            overflow: hidden; /* 确保隐私政策滑入时不超出 */
+            background: rgba(255, 255, 255, 0.98); border-radius: 24px; padding: 40px;
+            width: 90%; max-width: 480px; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        /* 按钮样式 */
-        .btn-group { display: flex; gap: 15px; margin-top: 30px; }
+        /* 顶部功能条 */
+        .top-bar {
+            position: absolute; top: 20px; right: 25px;
+            display: flex; align-items: center; z-index: 105;
+        }
+
+        /* 精致的语言切换开关 */
+        .lang-toggle {
+            background: #f1f1f1; border-radius: 20px; padding: 4px;
+            display: flex; gap: 4px; cursor: pointer; border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+        .lang-option {
+            padding: 4px 12px; border-radius: 16px; font-size: 11px;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+            transition: all 0.3s; color: #888;
+        }
+        .lang-option.active {
+            background: #000; color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* 文本内容样式 */
+        h2 { margin-top: 10px; font-size: 1.6rem; letter-spacing: -0.5px; }
+        p { line-height: 1.6; color: #555; margin-bottom: 20px; }
+        .warning-box {
+            background: #fff5f5; border-left: 4px solid #d9534f;
+            padding: 12px 16px; border-radius: 4px; margin: 20px 0;
+        }
+
+        /* 按钮系统 */
+        .btn-group { display: flex; gap: 12px; margin-top: 30px; }
         button {
-            flex: 1; padding: 12px; border: none; border-radius: 8px;
-            font-weight: bold; cursor: pointer; transition: 0.2s;
+            flex: 1; padding: 14px; border: none; border-radius: 12px;
+            font-weight: 700; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .btn-primary { background: #000; color: #fff; }
-        .btn-secondary { background: #f0f0f0; color: #333; }
-        button:hover { opacity: 0.8; transform: translateY(-1px); }
+        .btn-primary { background: #000; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-secondary { background: #f0f0f0; color: #444; }
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+        button:active { transform: translateY(0) scale(0.97); }
 
-        /* 隐私政策滑入层 */
+        /* 隐私页面滑入层 */
         #privacy-panel {
-            position: absolute; top: 0; left: 100%; /* 默认在右侧外部 */
+            position: absolute; top: 0; left: 100%;
             width: 100%; height: 100%; background: #fff;
             padding: 40px; box-sizing: border-box;
-            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex; flex-direction: column; z-index: 101;
+            transition: left 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            display: flex; flex-direction: column; z-index: 110;
         }
         #privacy-panel.active { left: 0; }
-        .privacy-content { overflow-y: auto; flex-grow: 1; margin-bottom: 20px; text-align: left; font-size: 0.9rem; }
-
-        /* 顶部小功能条：语言切换 */
-        .top-bar {
-            position: absolute; top: 15px; right: 20px;
-            display: flex; gap: 10px; align-items: center;
-        }
-        .lang-switch {
-            font-size: 12px; cursor: pointer; color: #007bff; text-decoration: underline;
+        .privacy-header { border-bottom: 1px solid #eee; margin-bottom: 20px; padding-bottom: 10px; }
+        .privacy-content { 
+            overflow-y: auto; flex-grow: 1; margin-bottom: 20px; 
+            text-align: left; font-size: 0.85rem; color: #666; line-height: 1.7;
         }
 
-        .link-style { margin-top: 20px; font-size: 0.85rem; color: #888; cursor: pointer; text-decoration: underline; display: block; text-align: center; }
+        .link-style { margin-top: 25px; font-size: 0.8rem; color: #999; cursor: pointer; text-decoration: none; display: block; text-align: center; transition: 0.2s; }
+        .link-style:hover { color: #000; text-decoration: underline; }
+
+        /* 滚动条美化 */
+        .privacy-content::-webkit-scrollbar { width: 4px; }
+        .privacy-content::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <div id="video-container">
-        <video id="bg-video" src="https://www.w3schools.com/html/mov_bbb.mp4" playsinline></video>
+        <video id="bg-video" src="/video.mp4" playsinline></video>
     </div>
 
     <div id="main-overlay">
         <div class="card">
             <div class="top-bar">
-                <span class="lang-switch" onclick="toggleLanguage()">English / 中文</span>
+                <div class="lang-toggle" onclick="toggleLanguage()">
+                    <div id="opt-en" class="lang-option">EN</div>
+                    <div id="opt-zh" class="lang-option">中文</div>
+                </div>
             </div>
 
             <div id="main-content">
                 <h2 id="txt-title"></h2>
-                <p id="txt-desc1" style="text-align: left;"></p>
-                <p id="txt-desc2" style="color: #d9534f; font-weight: bold; text-align: left; font-size: 0.85rem;"></p>
+                <p id="txt-desc1"></p>
+                <div class="warning-box">
+                    <p id="txt-desc2" style="margin:0; font-size: 0.85rem; color: #b91c1c;"></p>
+                </div>
                 
                 <div class="btn-group">
                     <button class="btn-primary" id="btn-accept" onclick="startExperience()"></button>
                     <button class="btn-secondary" id="btn-decline" onclick="startExperience()"></button>
                 </div>
-                <span class="link-style" id="txt-privacy-link" onclick="openPrivacy()"></span>
+                <a class="link-style" id="txt-privacy-link" onclick="openPrivacy()"></a>
             </div>
 
             <div id="privacy-panel">
-                <h3 id="txt-privacy-title"></h3>
-                <div class="privacy-content" id="txt-privacy-body"></div>
+                <div class="privacy-header">
+                    <h3 id="txt-privacy-title" style="margin:0;"></h3>
+                </div>
+                <div class="privacy-content" id="txt-privacy-body">
+                    </div>
                 <button class="btn-primary" id="btn-back" onclick="closePrivacy()"></button>
             </div>
         </div>
@@ -104,45 +144,42 @@
     <script>
         const translations = {
             en: {
-                title: "Cookies & Content",
-                desc1: "This website uses cookies to offer you the most relevant information and better understand how you use this website.",
-                desc2: "User-generated content may not be suitable for visitors who are at high risk of photosensitive epileptic seizes.",
-                accept: "Accept",
-                decline: "Decline",
-                privacyLink: "Privacy policy",
-                pTitle: "Privacy Policy",
-                pBody: "We value your privacy. This site collects minimal data to ensure video delivery. We do not sell your personal information to third parties. By using this site, you agree to our terms.",
-                back: "Back to Home"
+                title: "Terms & Privacy Update",
+                desc1: "To provide the best digital experience, this site uses secure cookies and encrypted streaming protocols. Please confirm your preferences to continue.",
+                desc2: "ATTENTION: This content contains rapid light patterns that may affect photosensitive viewers.",
+                accept: "Accept & Continue",
+                decline: "Decline All",
+                privacyLink: "View detailed privacy policy",
+                pTitle: "Security & Data Policy",
+                pBody: "<h4>1. Data Collection</h4><p>We use session-based identifiers to optimize video buffer rates. No personal identity data is stored on our local servers.</p><h4>2. Content Warning</h4><p>User-generated media is filtered through our safety AI, but we are not responsible for sudden high-volume audio or visual effects.</p><h4>3. Compliance</h4><p>By proceeding, you acknowledge that you are at least 13 years of age and agree to our end-user license agreement (EULA).</p>",
+                back: "Return to Selection"
             },
             zh: {
-                title: "Cookie 与内容声明",
-                desc1: "本网站使用 Cookie 以为您提供最相关的信息，并帮助我们了解您的使用偏好。",
-                desc2: "用户生成内容可能不适合患有光敏性癫痫高风险的访客，请谨慎观看。",
-                accept: "接受",
-                decline: "拒绝",
-                privacyLink: "隐私政策",
-                pTitle: "隐私政策声明",
-                pBody: "我们非常重视您的隐私。本网站仅收集必要的基础数据以保证视频的正常加载。我们承诺不会将您的个人信息出售给第三方。继续访问即表示您同意我们的条款。",
-                back: "返回首页"
+                title: "条款与隐私政策更新",
+                desc1: "为了提供最佳的数字体验，本站使用安全 Cookie 和加密传输协议。请确认您的偏好以继续访问。",
+                desc2: "注意：此内容包含快速闪烁的光影模式，可能会影响光敏性癫痫患者。",
+                accept: "接受并继续",
+                decline: "全部拒绝",
+                privacyLink: "查看详细隐私政策",
+                pTitle: "安全与数据政策",
+                pBody: "<h4>1. 数据收集</h4><p>我们使用基于会话的标识符来优化视频缓冲率。本地服务器不会存储任何个人身份数据。</p><h4>2. 内容警示</h4><p>用户生成媒体内容经过 AI 过滤，但我们对突发的高分贝音频或视觉效果不承担责任。</p><h4>3. 合规性</h4><p>继续访问即表示您确认已满 13 周岁，并同意我们的最终用户许可协议 (EULA)。</p>",
+                back: "返回选择"
             }
         };
 
         let currentLang = 'en';
 
-        // 初始化语言：检测浏览器或默认英文
         function initLanguage() {
             const userLang = navigator.language || navigator.userLanguage;
             currentLang = userLang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
             updateUI();
         }
 
-        // 手动切换语言
         function toggleLanguage() {
             currentLang = (currentLang === 'en') ? 'zh' : 'en';
             updateUI();
         }
 
-        // 更新页面所有文本
         function updateUI() {
             const t = translations[currentLang];
             document.getElementById('txt-title').innerText = t.title;
@@ -152,15 +189,17 @@
             document.getElementById('btn-decline').innerText = t.decline;
             document.getElementById('txt-privacy-link').innerText = t.privacyLink;
             document.getElementById('txt-privacy-title').innerText = t.pTitle;
-            document.getElementById('txt-privacy-body').innerText = t.pBody;
+            document.getElementById('txt-privacy-body').innerHTML = t.pBody;
             document.getElementById('btn-back').innerText = t.back;
+
+            // 切换按钮高亮状态
+            document.getElementById('opt-en').className = `lang-option ${currentLang === 'en' ? 'active' : ''}`;
+            document.getElementById('opt-zh').className = `lang-option ${currentLang === 'zh' ? 'active' : ''}`;
         }
 
-        // 隐私政策面板切换
         function openPrivacy() { document.getElementById('privacy-panel').classList.add('active'); }
         function closePrivacy() { document.getElementById('privacy-panel').classList.remove('active'); }
 
-        // 开始播放流程
         function startExperience() {
             const overlay = document.getElementById('main-overlay');
             const videoContainer = document.getElementById('video-container');
@@ -172,9 +211,15 @@
                 videoContainer.style.display = 'block';
                 setTimeout(() => { 
                     videoContainer.style.opacity = '1';
-                    video.play(); // 用户已交互，音频可自动播放
+                    // 核心逻辑：用户交互后尝试带声音播放
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.log("Auto-play was prevented. This might be due to video source issues.");
+                        });
+                    }
                 }, 100);
-            }, 500);
+            }, 600);
         }
 
         window.onload = initLanguage;
