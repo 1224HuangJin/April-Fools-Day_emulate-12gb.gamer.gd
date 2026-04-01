@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        /* 全局样式清除与重置 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000; /* 背景设为黑色，以搭配视频 */
+            overflow: hidden; /* 防止出现滚动条 */
+        }
+
+        /* 视频容器：全屏覆盖，默认隐藏 */
+        #video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out; /* 淡入动画 */
+        }
+
+        #bg-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 保证视频铺满全屏，可能会裁剪边缘 */
+        }
+
+        /* Cookie 弹窗遮罩层 */
+        #cookie-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px); /* 毛玻璃效果 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: opacity 0.5s ease-out; /* 淡出动画 */
+        }
+
+        /* Cookie 弹窗卡片 */
+        .cookie-card {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .cookie-card h2 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .cookie-card p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .warning-text {
+            font-size: 0.85rem;
+            color: #d9534f; /* 警告色 */
+            font-weight: bold;
+        }
+
+        /* 按钮容器与样式 */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        #btn-accept {
+            background-color: #000;
+            color: #fff;
+        }
+
+        #btn-accept:hover {
+            opacity: 0.8;
+        }
+
+        #btn-decline {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        #btn-decline:hover {
+            background-color: #e2e2e2;
+        }
+
+        /* 隐私政策链接 */
+        .privacy-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.85rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="video-container">
+        <video id="bg-video" src="/video.mp4" playsinline></video>
+    </div>
+
+    <div id="cookie-overlay">
+        <div class="cookie-card">
+            <h2 id="text-title">Cookies and user-generated content</h2>
+            <p id="text-desc1">This website uses cookies to offer you the most relevant information and better understand how you use this website. Please accept cookies for optimal performance.</p>
+            <p id="text-desc2" class="warning-text">User-generated content may not be suitable for visitors who are at high risk of photosensitive epileptic seizes.</p>
+            
+            <div class="btn-group">
+                <button id="btn-accept">Accept</button>
+                <button id="btn-decline">Decline</button>
+            </div>
+            
+            <a class="privacy-link" id="text-privacy">Privacy policy</a>
+        </div>
+    </div>
+
+    <script>
+        // 1. 定义语言字典
+        const langData = {
+            en: {
+                title: "Cookies and user-generated content",
+                desc1: "This website uses cookies to offer you the most relevant information and better understand how you use this website. Please accept cookies for optimal performance.",
+                desc2: "User-generated content may not be suitable for visitors who are at high risk of photosensitive epileptic seizes.",
+                accept: "Accept",
+                decline: "Decline",
+                privacy: "Privacy policy"
+            },
+            zh: {
+                title: "Cookie 与用户生成内容",
+                desc1: "本网站使用 Cookie 以为您提供最相关的信息，并更好地了解您如何使用本网站。请接受 Cookie 以获得最佳性能。",
+                desc2: "用户生成的内容可能不适合患有光敏性癫痫高风险的访客。",
+                accept: "接受",
+                decline: "拒绝",
+                privacy: "隐私政策"
+            }
+        };
+
+        // 2. 检测浏览器语言并设置文本
+        function setLanguage() {
+            // 获取浏览器语言（如 "zh-CN", "en-US"）
+            const userLang = navigator.language || navigator.userLanguage;
+            // 检查是否为中文（以 "zh" 开头），否则默认使用英文 "en"
+            const currentLang = userLang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+            
+            const texts = langData[currentLang];
+
+            // 替换页面上的文本
+            document.getElementById('text-title').innerText = texts.title;
+            document.getElementById('text-desc1').innerText = texts.desc1;
+            document.getElementById('text-desc2').innerText = texts.desc2;
+            document.getElementById('btn-accept').innerText = texts.accept;
+            document.getElementById('btn-decline').innerText = texts.decline;
+            document.getElementById('text-privacy').innerText = texts.privacy;
+        }
+
+        // 3. 处理点击事件和视频播放
+        function handleUserAction() {
+            const overlay = document.getElementById('cookie-overlay');
+            const videoContainer = document.getElementById('video-container');
+            const video = document.getElementById('bg-video');
+
+            // 隐藏 Cookie 弹窗 (淡出效果)
+            overlay.style.opacity = '0';
+            
+            setTimeout(() => {
+                overlay.style.display = 'none'; // 彻底移除占位
+                
+                // 显示视频容器 (淡入效果)
+                videoContainer.style.display = 'block';
+                // 稍微延迟以触发 CSS 淡入过渡
+                setTimeout(() => {
+                    videoContainer.style.opacity = '1';
+                }, 50);
+
+                // 播放视频（此时由于用户已经点击了按钮，浏览器允许带声音播放）
+                video.play().catch(error => {
+                    console.log("播放失败，可能是视频链接失效或浏览器严格限制 Playback failed, possibly because the video link is invalid or the browser has strict restrictions:", error);
+                });
+            }, 500); // 500ms 等待 CSS 淡出动画完成
+        }
+
+        // 4. 绑定事件监听器
+        window.onload = () => {
+            setLanguage(); // 页面加载时设置语言
+
+            // 无论点击接受还是拒绝，都触发视频播放逻辑
+            document.getElementById('btn-accept').addEventListener('click', handleUserAction);
+            document.getElementById('btn-decline').addEventListener('click', handleUserAction);
+        };
+    </script>
+</body>
+</html>
