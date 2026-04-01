@@ -1,10 +1,9 @@
 # April Fool's Video Portal 🃏 (2026/04/01)
 
-[English](https://www.google.com/search?q=%23english) | [简体中文](https://www.google.com/search?q=%23chinese)
+[English](#english) | [简体中文](#简体中文)
 
 -----
 
-\<a name="english"\>\</a\>
 
 ## English
 
