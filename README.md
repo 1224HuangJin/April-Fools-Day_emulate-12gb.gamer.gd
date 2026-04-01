@@ -27,11 +27,9 @@ This is a high-quality, professional-looking "Cookies & Privacy" portal designed
 
 ### ⚖️ License
 
-This project is licensed under the **MIT License**.
+This project is licensed under the [**MIT License**](https://github.com/1224HuangJin/April-Fools-Day_emulate-12gb.gamer.gd/blob/main/LICENSE).
 
 -----
-
-\<a name="chinese"\>\</a\>
 
 ## 简体中文
 
@@ -55,7 +53,7 @@ This project is licensed under the **MIT License**.
 
 ### ⚖️ 开源协议
 
-本项目采用 **MIT** 开源协议。
+本项目采用 [**MIT** 开源协议](https://github.com/1224HuangJin/April-Fools-Day_emulate-12gb.gamer.gd/blob/main/LICENSE)。
 
 -----
 
