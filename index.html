@@ -20,6 +20,25 @@
         }
         #bg-video { width: 100%; height: 100%; object-fit: cover; }
 
+        /* --- 新增：播放后的底部版权栏样式 --- */
+        #footer-info {
+            position: absolute; bottom: 20px; width: 100%;
+            text-align: center; z-index: 50;
+            opacity: 0; display: none; /* 初始隐藏 */
+            transition: opacity 2s ease;
+            pointer-events: auto;
+        }
+        .footer-text {
+            color: rgba(255, 255, 255, 0.4); /* 半透明白色，不抢戏 */
+            font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+            text-decoration: none; transition: 0.3s;
+        }
+        .footer-text a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: underline;
+        }
+        .footer-text a:hover { color: #fff; }
+
         /* 全屏模糊遮罩 */
         #main-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -105,6 +124,10 @@
 
     <div id="video-container">
         <video id="bg-video" src="/video.mp4" playsinline></video>
+        
+        <div id="footer-info">
+            <span class="footer-text" id="txt-footer"></span>
+        </div>
     </div>
 
     <div id="main-overlay">
@@ -134,8 +157,7 @@
                 <div class="privacy-header">
                     <h3 id="txt-privacy-title" style="margin:0;"></h3>
                 </div>
-                <div class="privacy-content" id="txt-privacy-body">
-                    </div>
+                <div class="privacy-content" id="txt-privacy-body"></div>
                 <button class="btn-primary" id="btn-back" onclick="closePrivacy()"></button>
             </div>
         </div>
@@ -152,7 +174,8 @@
                 privacyLink: "View detailed privacy policy",
                 pTitle: "Security & Data Policy",
                 pBody: "<h4>1. Data Collection</h4><p>We use session-based identifiers to optimize video buffer rates. No personal identity data is stored on our local servers.</p><h4>2. Content Warning</h4><p>User-generated media is filtered through our safety AI, but we are not responsible for sudden high-volume audio or visual effects.</p><h4>3. Compliance</h4><p>By proceeding, you acknowledge that you are at least 13 years of age and agree to our end-user license agreement (EULA).</p>",
-                back: "Return to Selection"
+                back: "Return to Selection",
+                footer: "© 2026 1224HuangJin. Source available on <a href='https://github.com/1224HuangJin/April-Fools-Day_emulate-12gb.gamer.gd' target='_blank'>GitHub</a>"
             },
             zh: {
                 title: "条款与隐私政策更新",
@@ -163,7 +186,8 @@
                 privacyLink: "查看详细隐私政策",
                 pTitle: "安全与数据政策",
                 pBody: "<h4>1. 数据收集</h4><p>我们使用基于会话的标识符来优化视频缓冲率。本地服务器不会存储任何个人身份数据。</p><h4>2. 内容警示</h4><p>用户生成媒体内容经过 AI 过滤，但我们对突发的高分贝音频或视觉效果不承担责任。</p><h4>3. 合规性</h4><p>继续访问即表示您确认已满 13 周岁，并同意我们的最终用户许可协议 (EULA)。</p>",
-                back: "返回选择"
+                back: "返回选择",
+                footer: "© 2026 1224HuangJin | 源码已在 <a href='https://github.com/1224HuangJin/April-Fools-Day_emulate-12gb.gamer.gd' target='_blank'>GitHub</a> 开源"
             }
         };
 
@@ -191,8 +215,8 @@
             document.getElementById('txt-privacy-title').innerText = t.pTitle;
             document.getElementById('txt-privacy-body').innerHTML = t.pBody;
             document.getElementById('btn-back').innerText = t.back;
+            document.getElementById('txt-footer').innerHTML = t.footer;
 
-            // 切换按钮高亮状态
             document.getElementById('opt-en').className = `lang-option ${currentLang === 'en' ? 'active' : ''}`;
             document.getElementById('opt-zh').className = `lang-option ${currentLang === 'zh' ? 'active' : ''}`;
         }
@@ -204,20 +228,20 @@
             const overlay = document.getElementById('main-overlay');
             const videoContainer = document.getElementById('video-container');
             const video = document.getElementById('bg-video');
+            const footer = document.getElementById('footer-info');
 
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
+                
+                // 显示视频和底部信息
                 videoContainer.style.display = 'block';
+                footer.style.display = 'block';
+                
                 setTimeout(() => { 
                     videoContainer.style.opacity = '1';
-                    // 核心逻辑：用户交互后尝试带声音播放
-                    const playPromise = video.play();
-                    if (playPromise !== undefined) {
-                        playPromise.catch(error => {
-                            console.log("Auto-play was prevented. This might be due to video source issues.");
-                        });
-                    }
+                    footer.style.opacity = '1'; // 随着视频平滑淡入
+                    video.play();
                 }, 100);
             }, 600);
         }
